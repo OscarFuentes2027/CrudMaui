@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:Crud.ViewModels"
+             x:Class="Crud.NewPage1"
+             Title="NewPage1">
+    <ContentPage.BindingContext>
+        <viewmodels:UserViewModel />
+    </ContentPage.BindingContext>
+
+    <VerticalStackLayout Padding="20">
+        <Entry Placeholder="Nombre" Text="{Binding NewUserName.Name, Mode=TwoWay}"/>
+        <Entry Placeholder="Correo" Text="{Binding NewUserName.Email, Mode=TwoWay}"/>
+        <Entry Placeholder="Contraseña" Text="{Binding NewUserName.Password, Mode=TwoWay}"/>
+        <Button Text="Guardar" Command="{Binding SaveUserCommand}"/>
+        <Button Text="Cancelar" Command="{Binding CancelUserCommand}"/>
+    </VerticalStackLayout>
+</ContentPage>
