@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Crud.Data;
 using Crud.Repositories;
 using Crud.ViewModels;
+using Crud.Models;
 
 namespace Crud
 {
@@ -19,14 +20,19 @@ namespace Crud
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
 
-            // Aqui estoy registrando el contexto de la base de datos
+            // Configuración de la base de datos
+            string dbPath = Path.Combine(FileSystem.AppDataDirectory, "MauiCrudApp.db");
+            builder.Services.AddDbContext<AppDbContext>(options =>
+            {
+                var dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "..", "MauiCrudApp.db");
+                options.UseSqlite($"Filename={dbPath}");
+            });
 
-            builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlite($"Filename={System.IO.Path.Combine(FileSystem.AppDataDirectory, "MauiCrudApp.db")}"));
 
-            builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-
+            // Repositorios y ViewModels
+            builder.Services.AddTransient<IRepository<Usuarios>, Repository<Usuarios>>();  // Usamos el repositorio genérico para Usuarios
             builder.Services.AddTransient<UserViewModel>();
-
+            builder.Services.AddTransient<UserListPage>();
 
 #if DEBUG
             builder.Logging.AddDebug();

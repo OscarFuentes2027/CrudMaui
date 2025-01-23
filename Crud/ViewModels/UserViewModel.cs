@@ -12,10 +12,10 @@ namespace Crud.ViewModels
         private readonly IRepository<Usuarios> _repository;
 
         [ObservableProperty]
-        private ObservableCollection<Usuarios> _users;
+        private ObservableCollection<Usuarios> _users = new(); // Inicializamos directamente para evitar valores nulos
 
         [ObservableProperty]
-        private Usuarios _newUserName;
+        private Usuarios _newUserName = new(); // Inicializamos con una nueva instancia para evitar valores nulos
 
         // Constructor sin parámetros público
         public UserViewModel()
@@ -26,21 +26,23 @@ namespace Crud.ViewModels
         // Constructor con parámetros para inyección de dependencias
         public UserViewModel(IRepository<Usuarios> repository)
         {
-            _repository = repository;
-            _users = new ObservableCollection<Usuarios>();
+            _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
 
         [RelayCommand]
         public async Task LoadUsersAsync()
         {
             var users = await _repository.GetAllAsync();
-            Users = new ObservableCollection<Usuarios>(users);
+            if (users != null && users.Any()) // Comprueba si hay datos válidos
+            {
+                Users = new ObservableCollection<Usuarios>(users);
+            }
         }
 
         [RelayCommand]
         public async Task AddUserAsync()
         {
-            NewUserName = new Usuarios(); 
+            NewUserName = new Usuarios(); // Reinicia la instancia del nuevo usuario
             await Shell.Current.GoToAsync(nameof(NewPage1));
         }
 
@@ -65,15 +67,21 @@ namespace Crud.ViewModels
         [RelayCommand]
         public async Task EditUserAsync(Usuarios user)
         {
-            NewUserName = user; 
-            await Shell.Current.GoToAsync(nameof(NewPage1));
+            if (user != null)
+            {
+                NewUserName = user; // Asigna el usuario seleccionado para edición
+                await Shell.Current.GoToAsync(nameof(NewPage1));
+            }
         }
 
         [RelayCommand]
         public async Task DeleteUserAsync(Usuarios user)
         {
-            await _repository.DeleteAsync(user);
-            await LoadUsersAsync();
+            if (user != null)
+            {
+                await _repository.DeleteAsync(user);
+                await LoadUsersAsync();
+            }
         }
 
         [RelayCommand]

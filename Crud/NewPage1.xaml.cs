@@ -1,15 +1,17 @@
-namespace Crud;
-using Crud.ViewModels;
 using Microsoft.Maui.Controls;
-public partial class NewPage1 : ContentPage
+using Crud.ViewModels;
+using System.Diagnostics;
+
+namespace Crud
 {
-	public NewPage1()
-	{
-		InitializeComponent();
-     
-    }
-    public NewPage1(UserViewModel viewModel) 
+    public partial class NewPage1 : ContentPage
     {
-        InitializeComponent(); BindingContext = viewModel; 
+        public NewPage1(UserViewModel viewModel)
+        {
+
+
+            InitializeComponent();
+            BindingContext = viewModel;
+        }
     }
 }
