@@ -20,5 +20,13 @@
         Title="Ver usuarios"
         ContentTemplate="{DataTemplate local:UserListPage}"
         Route="UserListPage" />
+    <ShellContent
+        Title="Publicar libros"
+        ContentTemplate="{DataTemplate local:Add_Book}"
+        Route="Add Book" />
+    <ShellContent
+        Title="Ver Libros publicados"
+        ContentTemplate="{DataTemplate local:ListBooksPage}"
+        Route="ListBooksPage" />
 
 </Shell>

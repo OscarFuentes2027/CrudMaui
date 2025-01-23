@@ -14,6 +14,8 @@ namespace Crud.Infrastructure.Data
     {
         // Aqui defino una tabla llamada Usuarios utilizando el modelo Usuarios
         public DbSet<Usuarios> Usuarios { get; set; }
+        public DbSet<Libro> Libros { get; set; }
+
 
         // Aqui defino el constructor de la clase
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)

@@ -31,9 +31,12 @@ namespace Crud
 
 
             // Repositorios y ViewModels
-            builder.Services.AddTransient<IRepository<Usuarios>, Repository<Usuarios>>();  // Usamos el repositorio genérico para Usuarios
+            builder.Services.AddTransient<IRepository<Usuarios>, Repository<Usuarios>>();  
             builder.Services.AddTransient<UserViewModel>();
             builder.Services.AddTransient<UserListPage>();
+
+            builder.Services.AddTransient<BookViewModel>(); 
+            builder.Services.AddTransient<IRepository<Libro>, Repository<Libro>>();
 
 #if DEBUG
             builder.Logging.AddDebug();
