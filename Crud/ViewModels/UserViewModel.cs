@@ -2,8 +2,9 @@
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Crud.Models;
-using Crud.Repositories;
+using Crud.Core.Entities;
+using Crud.Core.Interfaces;
+
 
 namespace Crud.ViewModels
 {

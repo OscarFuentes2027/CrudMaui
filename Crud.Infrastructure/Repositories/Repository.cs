@@ -4,10 +4,11 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
-using Crud.Data;
+using Crud.Infrastructure.Data;
+using Crud.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace Crud.Repositories
+namespace Crud.Infrastructure.Repositories
 {
     public class Repository<T> : IRepository<T> where T : class
     {

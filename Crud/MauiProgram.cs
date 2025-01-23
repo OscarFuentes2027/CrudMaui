@@ -1,9 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
-using Crud.Data;
-using Crud.Repositories;
+using Crud.Infrastructure.Data;
+using Crud.Core.Interfaces;
 using Crud.ViewModels;
-using Crud.Models;
+using Crud.Core.Entities;
+using Crud.Infrastructure.Repositories;
 
 namespace Crud
 {
@@ -21,10 +22,10 @@ namespace Crud
                 });
 
             // Configuración de la base de datos
-            string dbPath = Path.Combine(FileSystem.AppDataDirectory, "MauiCrudApp.db");
+            
             builder.Services.AddDbContext<AppDbContext>(options =>
             {
-                var dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "..", "MauiCrudApp.db");
+                var dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MauiCrudApp.db");
                 options.UseSqlite($"Filename={dbPath}");
             });
 

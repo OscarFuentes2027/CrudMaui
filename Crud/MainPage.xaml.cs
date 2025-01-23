@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Crud.Data;
+using Crud.Infrastructure.Data;
 using System.Diagnostics;
 
 namespace Crud

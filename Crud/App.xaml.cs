@@ -1,12 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Crud.Data;
+using Crud.Infrastructure.Data;
 using Crud.ViewModels;
 using System.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Maui.Controls;  // Asegúrate de tener este using
 
 namespace Crud
 {
-    public partial class App : Application
+    public partial class App : Application  
     {
         private readonly UserViewModel _userViewModel;
         private readonly AppDbContext _dbContext;
@@ -22,8 +23,6 @@ namespace Crud
             {
                 Debug.WriteLine("Base de datos creada correctamente.");
             }
-
-            // Se elimina la línea de MainPage, ya que se configura en CreateWindow.
         }
 
         protected override Window CreateWindow(IActivationState? activationState)

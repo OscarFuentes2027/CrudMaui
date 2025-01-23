@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Crud.Models;
+using Crud.Core.Entities;
 using System.Diagnostics;
 
-namespace Crud.Data
+namespace Crud.Infrastructure.Data
 {
 
     public class AppDbContext : DbContext
@@ -25,7 +25,7 @@ namespace Crud.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                var dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "..", "MauiCrudApp.db");
+                var dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MauiCrudApp.db");
                 Debug.WriteLine($"xixixixixixixi Usando base de datos en: {Path.GetFullPath(dbPath)}");
                 optionsBuilder.UseSqlite($"Filename={dbPath}");
             }
