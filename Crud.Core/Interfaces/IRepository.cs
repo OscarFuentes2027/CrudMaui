@@ -11,6 +11,7 @@ namespace Crud.Core.Interfaces
     {
         // Obtiene todos los elementos
         Task<IEnumerable<T>> GetAllAsync();
+        Task<IEnumerable<T>> GetAllAsync(Func<IQueryable<T>, IQueryable<T>> include);
         // Obtiene un elemento por su id
         Task<T> GetByIdAsync(int id);
         // Obtiene un elemento por una condicion

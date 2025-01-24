@@ -16,16 +16,16 @@ namespace Crud.Core.Entities
 
         [Required]
         [MaxLength(100)]
-        public string Titulo { get; set; }
+        public string Titulo { get; set; } = string.Empty;
 
         [Required]
         [MaxLength(50)]
-        public string Genero { get; set; }
+        public string Genero { get; set; } = string.Empty;
 
         public DateTime FechaPublicacion { get; set; }
 
         [ForeignKey("Usuarios")]
         public int UsuarioId { get; set; }
-        public Usuarios Usuario { get; set; }
+        public Usuarios? Usuario { get; set; }
     }
 }

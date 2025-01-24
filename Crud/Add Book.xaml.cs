@@ -5,22 +5,15 @@ namespace Crud;
 
 public partial class Add_Book : ContentPage
 {
-    public Add_Book()
-    {
-        InitializeComponent();
-    }
 
-    
-    private void OnUserSelected(object sender, EventArgs e)
-    {
-        var picker = (Picker)sender;
-        var selectedUser = (Usuarios)picker.SelectedItem;
+   
+        private readonly BookViewModel _viewModel;
 
-        
-        if (selectedUser != null)
+        public Add_Book(BookViewModel viewModel)
         {
-            var viewModel = (BookViewModel)BindingContext;
-            viewModel.CurrentBook.UsuarioId = selectedUser.Id;  
+            InitializeComponent();
+            BindingContext = _viewModel = viewModel;
         }
-    }
+   
+
 }

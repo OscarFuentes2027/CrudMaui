@@ -11,19 +11,15 @@
     </ContentPage.BindingContext>
 
     <VerticalStackLayout Padding="20">
-        <!-- Campo para ingresar el título del libro -->
         <Entry Placeholder="Title" Text="{Binding CurrentBook.Titulo, Mode=TwoWay}"/>
 
-        <!-- Campo para ingresar el género del libro -->
         <Entry Placeholder="Genre" Text="{Binding CurrentBook.Genero, Mode=TwoWay}"/>
 
-        <!-- Campo para seleccionar la fecha de publicación del libro -->
         <DatePicker Date="{Binding CurrentBook.FechaPublicacion, Mode=TwoWay}" />
 
-        <!-- Campo para ingresar manualmente el ID del usuario -->
         <Entry Placeholder="User ID" Text="{Binding CurrentBook.UsuarioId, Mode=TwoWay}" Keyboard="Numeric"/>
 
-        <!-- Botón para agregar el libro -->
-        <Button Text="Add Book" Command="{Binding AddBookAsyncCommand}" />
+        <Button Text="Add Book" Command="{Binding SaveDataCommand}" />
+
     </VerticalStackLayout>
 </ContentPage>

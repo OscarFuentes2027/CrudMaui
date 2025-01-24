@@ -1,85 +1,102 @@
 ﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Crud.Core.Entities;
-using Crud.Core.Interfaces;
+using Crud.Infrastructure.Repositories;
 
 namespace Crud.ViewModels
 {
     public partial class BookViewModel : ObservableObject
     {
-        public IRepository<Libro> BookRepository { get; }
-        public IRepository<Usuarios> UserRepository { get; }
+        private readonly BookRepository _bookRepository;
+        private readonly UserRepository _userRepository;
 
         [ObservableProperty]
-        private ObservableCollection<Libro> books;
+        private ObservableCollection<Libro> _books = new();
 
         [ObservableProperty]
-        private ObservableCollection<Usuarios> users;
+        private ObservableCollection<Usuarios> _users = new();
 
         [ObservableProperty]
-        private Libro currentBook;
-
-        // Constructor sin parámetros
-        public BookViewModel()
-        {
-            CurrentBook = new Libro();
-        }
+        private Libro currentBook = new();
 
         // Constructor con inyección de dependencias
-        public BookViewModel(IRepository<Libro> bookRepository, IRepository<Usuarios> userRepository)
+        public BookViewModel(BookRepository bookRepository, UserRepository userRepository)
         {
-            BookRepository = bookRepository;
-            UserRepository = userRepository;
-            CurrentBook = new Libro();
-
-            // Cargar datos asíncronamente
-            _ = LoadDataAsync();
+            _bookRepository = bookRepository ?? throw new ArgumentNullException(nameof(bookRepository));
+            _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+        }
+        public BookViewModel()
+        {
+            // Este constructor es necesario si usas XAML para instanciar BookViewModel
         }
 
-        private async Task LoadDataAsync()
+        // Método para cargar datos (libros y usuarios)
+        [RelayCommand]
+        public async Task LoadDataAsync()
         {
-            // Carga los libros
-            Books = new ObservableCollection<Libro>(await BookRepository.GetAllAsync());
-            // Libros
-            Books = new ObservableCollection<Libro>(await BookRepository.GetAllAsync());
-            // Usuarios (para seleccionarlos en Picker)
-            Users = new ObservableCollection<Usuarios>(await UserRepository.GetAllAsync());
+            Debug.WriteLine("Cargando libros y usuarios...");
 
-            // Asegúrate de que cada libro tenga el Usuario cargado
+            // Carga los libros desde la base de datos
+            var libros = await _bookRepository.GetAllAsync();
+            Books = new ObservableCollection<Libro>(libros);
+
+            // Carga los usuarios desde la base de datos
+            var usuarios = await _userRepository.GetAllAsync();
+            Users = new ObservableCollection<Usuarios>(usuarios);
+
+            Debug.WriteLine($"Libros cargados: {Books.Count}");
             foreach (var libro in Books)
             {
-                libro.Usuario = await UserRepository.GetByIdAsync(libro.UsuarioId);
+                Debug.WriteLine($"Libro: Id={libro.Id}, Titulo={libro.Titulo}, UsuarioId={libro.UsuarioId}");
+            }
+
+            Debug.WriteLine($"Usuarios cargados: {Users.Count}");
+        }
+
+        // Método para agregar o actualizar un libro
+        [RelayCommand]
+        private async Task SaveData()
+        {
+            if (CurrentBook != null)
+            {
+                if (CurrentBook.Id == 0)
+                {
+                    // Agregar un nuevo libro
+                    await _bookRepository.AddAsync(CurrentBook);
+                }
+                else
+                {
+                    // Actualizar un libro existente
+                    await _bookRepository.UpdateAsync(CurrentBook);
+                }
+
+                await LoadDataAsync();
+                await Shell.Current.GoToAsync("..");
             }
         }
 
 
-
-
-
+        // Método para agregar un nuevo libro (navega a la página de agregar libro)
         [RelayCommand]
         public async Task AddBookAsync()
         {
-            if (CurrentBook.UsuarioId <= 0)
-            {
-                Console.WriteLine("El ID del usuario no es válido.");
-                return;
-            }
-
-            try
-            {
-                await BookRepository.AddAsync(CurrentBook);
-                CurrentBook = new Libro(); // Reinicia el libro actual
-                await LoadDataAsync();
-                Console.WriteLine("Libro agregado correctamente.");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error al agregar libro: {ex.Message}");
-            }
+            CurrentBook = new Libro(); // Reinicia el libro actual
+            await Shell.Current.GoToAsync(nameof(Add_Book)); // Navega a la página de agregar libro
         }
 
+        // Método de depuración para imprimir las tablas y libros en la base de datos
+        public async Task DebugDatabaseAsync()
+        {
+            var libros = (await _bookRepository.GetAllAsync()).ToList(); // Convierte a lista para acceder a Count
+            Debug.WriteLine($"Libros encontrados: {libros.Count}");
+            foreach (var libro in libros)
+            {
+                Debug.WriteLine($"Libro: Id={libro.Id}, Titulo={libro.Titulo}, Genero={libro.Genero}, FechaPublicacion={libro.FechaPublicacion}, UsuarioId={libro.UsuarioId}");
+            }
+        }
 
     }
 }

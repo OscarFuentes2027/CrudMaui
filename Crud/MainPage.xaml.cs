@@ -1,34 +1,40 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Crud.Infrastructure.Data;
+﻿using Crud.Infrastructure.Data;
+using Dapper;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
 namespace Crud
 {
     public partial class MainPage : ContentPage
     {
+        private readonly DatabaseConnection _databaseConnection;
 
-
-        public MainPage()
+        public MainPage(DatabaseConnection databaseConnection)
         {
-           
+            _databaseConnection = databaseConnection;
 
             InitializeComponent();
             VerificarUsuarios();
         }
 
-        private void VerificarUsuarios()
+        private async void VerificarUsuarios()
         {
-
-                using (var context = new AppDbContext(new DbContextOptions<AppDbContext>()))
+            try
+            {
+                // Usamos la conexión con Dapper para acceder a la base de datos
+                using (var connection = _databaseConnection.CreateConnection())
                 {
-                    var usuarios = context.Usuarios.ToList();
-                    Debug.WriteLine($"Usuarios encontrados: {usuarios.Count}");
+                    var usuarios = await connection.QueryAsync<dynamic>("SELECT * FROM Usuarios");
+                    var libros = await connection.QueryAsync<dynamic>("SELECT * FROM Libros");
+
+                    Debug.WriteLine($"Usuarios encontrados: {usuarios.Count()}");
+                    Debug.WriteLine($"Libros encontrados: {libros.Count()}");
                 }
-           
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error al verificar usuarios y libros: {ex.Message}");
+            }
         }
-
-
-
     }
-
 }

@@ -1,10 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
-using Microsoft.EntityFrameworkCore;
 using Crud.Infrastructure.Data;
-using Crud.Core.Interfaces;
-using Crud.ViewModels;
-using Crud.Core.Entities;
 using Crud.Infrastructure.Repositories;
+using Crud.ViewModels;
 
 namespace Crud
 {
@@ -21,22 +18,18 @@ namespace Crud
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
 
-            // Configuración de la base de datos
-            
-            builder.Services.AddDbContext<AppDbContext>(options =>
-            {
-                var dbPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MauiCrudApp.db");
-                options.UseSqlite($"Filename={dbPath}");
-            });
+            // Registrar DatabaseConnection
+            builder.Services.AddSingleton<DatabaseConnection>();
 
-
-            // Repositorios y ViewModels
-            builder.Services.AddTransient<IRepository<Usuarios>, Repository<Usuarios>>();  
+            // Registrar UserViewModel y otros servicios necesarios
             builder.Services.AddTransient<UserViewModel>();
-            builder.Services.AddTransient<UserListPage>();
 
-            builder.Services.AddTransient<BookViewModel>(); 
-            builder.Services.AddTransient<IRepository<Libro>, Repository<Libro>>();
+            // Registrar BookViewModel (si se usa)
+            builder.Services.AddTransient<BookViewModel>();
+
+            // Registrar repositorios (si usas Dapper o algún otro repositorio específico)
+            builder.Services.AddTransient<UserRepository>();
+            builder.Services.AddTransient<BookRepository>();
 
 #if DEBUG
             builder.Logging.AddDebug();

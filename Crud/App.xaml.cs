@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Crud.Infrastructure.Data;
+﻿using Crud.Infrastructure.Data;
 using Crud.ViewModels;
 using System.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,21 +6,31 @@ using Microsoft.Maui.Controls;  // Asegúrate de tener este using
 
 namespace Crud
 {
-    public partial class App : Application  
+    public partial class App : Application
     {
         private readonly UserViewModel _userViewModel;
-        private readonly AppDbContext _dbContext;
+        private readonly DatabaseConnection _databaseConnection;
 
         public App(IServiceProvider serviceProvider)
         {
             InitializeComponent();
 
-            _dbContext = serviceProvider.GetRequiredService<AppDbContext>();
+            // Obtén las dependencias necesarias
+            _databaseConnection = serviceProvider.GetRequiredService<DatabaseConnection>();
             _userViewModel = serviceProvider.GetRequiredService<UserViewModel>();
 
-            if (_dbContext.Database.EnsureCreated())
+            // Verifica la conexión con la base de datos
+            using (var connection = _databaseConnection.CreateConnection())
             {
-                Debug.WriteLine("Base de datos creada correctamente.");
+                try
+                {
+                    connection.Open();
+                    Debug.WriteLine("Conexión a la base de datos establecida correctamente.");
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Error al conectar con la base de datos: {ex.Message}");
+                }
             }
         }
 
