@@ -27,6 +27,16 @@ namespace Crud.Infrastructure.Repositories
 
         private static readonly object _dbLock = new object();
 
+        public async Task<Usuarios> GetByIdAsync(int id)
+        {
+            using (var connection = _databaseConnection.CreateConnection())
+            {
+                const string query = "SELECT * FROM Usuarios WHERE Id = @Id";
+                return await connection.QuerySingleOrDefaultAsync<Usuarios>(query, new { Id = id });
+            }
+        }
+
+
         public async Task AddAsync(Usuarios usuario)
         {
             using (var connection = _databaseConnection.CreateConnection())

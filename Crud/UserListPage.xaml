@@ -28,7 +28,10 @@
                         <Label Text="{Binding Name}" VerticalOptions="Center"/>
                         <Label Text="{Binding Email}" VerticalOptions="Center"/>
                         <Label Text="{Binding Password}" VerticalOptions="Center"/>
-                        <Button Text="Editar" Command="{Binding Source={RelativeSource AncestorType={x:Type vm:UserViewModel}}, Path=EditUserCommand}" CommandParameter="{Binding}" />
+                        <Button
+                            Text="Editar"
+                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:UserViewModel}}, Path=EditUserCommand}"
+                            CommandParameter="{Binding}" />
                         <Button Text="Eliminar" Command="{Binding Source={RelativeSource AncestorType={x:Type vm:UserViewModel}}, Path=DeleteUserCommand}" CommandParameter="{Binding}" />
                     </StackLayout>
                 </DataTemplate>

@@ -15,11 +15,8 @@ public partial class ListBooksPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-        await _viewModel.DebugDatabaseAsync();
-        // Solo carga los datos si no se han cargado previamente
-        if (_viewModel.Books == null || !_viewModel.Books.Any())
-        {
-            await _viewModel.LoadDataAsync();
-        }
+
+        await _viewModel.DebugDatabaseAsync(); // Esto es opcional si es solo para debug
+        await _viewModel.LoadDataAsync(); // Siempre recarga los datos
     }
 }

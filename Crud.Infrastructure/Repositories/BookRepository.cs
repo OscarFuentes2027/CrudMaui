@@ -35,6 +35,24 @@ namespace Crud.Infrastructure.Repositories
             }
         }
 
+        public async Task<Libro> GetByIdAsync(int id)
+        {
+            using (var connection = _databaseConnection.CreateConnection())
+            {
+                string sql = "SELECT * FROM Libros WHERE Id = @Id";
+                return await connection.QueryFirstOrDefaultAsync<Libro>(sql, new { Id = id });
+            }
+        }
+
+
+        public async Task DeleteAsync(Libro libro)
+        {
+            using (IDbConnection connection = _databaseConnection.CreateConnection())
+            {
+                const string query = "DELETE FROM Libros WHERE Id = @Id";
+                await connection.ExecuteAsync(query, libro);
+            }
+        }
         public async Task UpdateAsync(Libro libro)
         {
             using (var connection = _databaseConnection.CreateConnection())

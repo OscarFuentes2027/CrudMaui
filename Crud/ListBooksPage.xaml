@@ -17,6 +17,11 @@
                         <Label Text="{Binding Titulo}" />
                         <Label Text="{Binding Genero}" />
                         <Label Text="{Binding FechaPublicacion, StringFormat='{0:dd/MM/yyyy}'}" />
+                        <Button 
+                                Text="Editar" 
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BookViewModel}}, Path=EditBookCommand}" 
+                                CommandParameter="{Binding}" />
+                        <Button Text="Eliminar" Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BookViewModel}}, Path=DeleteBookCommand}" CommandParameter="{Binding}" />
                     </StackLayout>
                 </DataTemplate>
             </CollectionView.ItemTemplate>

@@ -32,27 +32,30 @@ namespace Crud.ViewModels
         }
 
         // Método para cargar usuarios desde la base de datos
-        [RelayCommand]
-        public async Task LoadUsersAsync()
+        public async Task LoadUserByIdAsync(int userId)
         {
             try
             {
-                await _semaphore.WaitAsync(); // Garantiza acceso exclusivo
-                Debug.WriteLine("Cargando usuarios desde la base de datos...");
-                var users = await _userRepository.GetAllAsync();
-                if (users != null && users.Any()) // Comprueba si hay datos válidos
+                var user = await _userRepository.GetByIdAsync(userId);
+                if (user != null)
                 {
-                    Users = new ObservableCollection<Usuarios>(users);
+                    Debug.WriteLine($"Usuario encontrado: Id={user.Id}, Name={user.Name}, Email={user.Email}");
+                    NewUserName = new Usuarios
+                    {
+                        Id = user.Id,
+                        Name = user.Name,
+                        Email = user.Email,
+                        Password = user.Password
+                    };
                 }
-                Debug.WriteLine($"Usuarios cargados: {Users.Count}");
+                else
+                {
+                    Debug.WriteLine($"Usuario con Id={userId} no encontrado.");
+                }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error en LoadUsersAsync: {ex.Message}");
-            }
-            finally
-            {
-                _semaphore.Release();
+                Debug.WriteLine($"Error en LoadUserByIdAsync: {ex.Message}");
             }
         }
 
@@ -64,46 +67,54 @@ namespace Crud.ViewModels
             await Shell.Current.GoToAsync(nameof(NewPage1));
         }
 
+
+
         // Método para guardar (crear o actualizar) un usuario
         [RelayCommand]
         public async Task SaveUserAsync()
         {
-            if (NewUserName != null)
+            if (NewUserName == null)
             {
-                try
-                {
-                    await _semaphore.WaitAsync();
-                    Debug.WriteLine("Inicio de SaveUserAsync");
-                    if (NewUserName.Id == 0)
-                    {
-                        Debug.WriteLine("Añadiendo usuario...");
-                        await _userRepository.AddAsync(NewUserName);
-                        Debug.WriteLine("Usuario añadido correctamente");
-                    }
-                    else
-                    {
-                        Debug.WriteLine("Actualizando usuario...");
-                        await _userRepository.UpdateAsync(NewUserName);
-                        Debug.WriteLine("Usuario actualizado correctamente");
-                    }
+                Debug.WriteLine("No hay datos de usuario para guardar.");
+                return;
+            }
 
-                    await LoadUsersAsync();
-                    Debug.WriteLine("Usuarios cargados después de guardar");
+            try
+            {
+                await _semaphore.WaitAsync();
+                Debug.WriteLine("Inicio de SaveUserAsync");
 
-                    await Shell.Current.GoToAsync("..");
-                }
-                catch (Exception ex)
+                if (NewUserName.Id > 0) // Actualizar si el Id ya existe
                 {
-                    Debug.WriteLine($"Error en SaveUserAsync: {ex.Message}");
+                    Debug.WriteLine("Actualizando usuario...");
+                    await _userRepository.UpdateAsync(NewUserName);
+                    Debug.WriteLine("Usuario actualizado correctamente");
                 }
-                finally
+                else // Crear nuevo usuario si Id es 0
                 {
-                    _semaphore.Release();
+                    Debug.WriteLine("Añadiendo usuario...");
+                    await _userRepository.AddAsync(NewUserName);
+                    Debug.WriteLine("Usuario añadido correctamente");
                 }
+
+                // Recargar la lista de usuarios
+                await LoadUsersAsync();
+                Debug.WriteLine("Usuarios cargados después de guardar");
+
+                // Regresar a la lista
+                await Shell.Current.GoToAsync("..");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error en SaveUserAsync: {ex.Message}");
+            }
+            finally
+            {
+                _semaphore.Release();
             }
         }
 
-        // Método para editar un usuario (prepararlo para edición)
+
         [RelayCommand]
         public async Task EditUserAsync(Usuarios user)
         {
@@ -115,9 +126,46 @@ namespace Crud.ViewModels
 
             Debug.WriteLine($"Editando usuario: Id={user.Id}, Name={user.Name}, Email={user.Email}");
 
-            NewUserName = user; // Asigna el usuario seleccionado para edición
-            await Shell.Current.GoToAsync(nameof(NewPage1));
+            // Copia el usuario a NewUserName para editar
+            NewUserName = new Usuarios
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Email = user.Email,
+                Password = user.Password
+            };
+
+            // Navega a NewPage1 con el parámetro UserId
+            var navigationParameters = new Dictionary<string, object>
+    {
+        { "UserId", user.Id }
+    };
+
+            await Shell.Current.GoToAsync(nameof(NewPage1), navigationParameters);
         }
+
+
+        [RelayCommand]
+        public async Task LoadUsersAsync()
+        {
+            try
+            {
+                Debug.WriteLine("Cargando usuarios desde la base de datos...");
+                var users = await _userRepository.GetAllAsync(); // Obtén todos los usuarios desde el repositorio
+
+                if (users != null && users.Any()) // Comprueba si hay datos válidos
+                {
+                    Users = new ObservableCollection<Usuarios>(users); // Asigna los usuarios a la propiedad ObservableCollection
+                }
+
+                Debug.WriteLine($"Usuarios cargados: {Users.Count}");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error en LoadUsersAsync: {ex.Message}");
+            }
+        }
+
 
         // Método para eliminar un usuario
         [RelayCommand]
